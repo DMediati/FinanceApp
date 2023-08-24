@@ -1,0 +1,4 @@
+# Make a copy of this file named .env in this folder and fill in the values 
+PLAID_CLIENT_ID=""
+PLAID_SECRET=""
+PLAID_ENV=""
