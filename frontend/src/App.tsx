@@ -2,48 +2,8 @@ import { useEffect, useState } from 'react'
 import { usePlaidLink } from 'react-plaid-link'
 import './App.css'
 
-function UsernameInput({ username, setUsername }: { username: string, setUsername:any }) {
-    return (
-        <input key="username-input" type="text" value={username} placeholder='Username' onChange={evt => setUsername(evt.target.value)} />
-    )
-}
-
-function Link({ linkToken, onSuccess, username, setUsername, SignIn }: any) {
-    if ( linkToken != null ) {
-        const config: Parameters<typeof usePlaidLink>[0] = {
-            token: linkToken,
-            // receivedRedirectUri: window.location.href,
-            onSuccess,
-        };
-
-        const { open, ready } = usePlaidLink(config);
-
-        useEffect(() => {
-            if (ready) {
-                open();
-            }
-        }, [ready, open]);
-
-        return (
-            <button onClick={() => open()} disabled={!ready}>
-                Retry Account Link
-            </button>
-        );
-    }
-    return (
-        <>
-            <UsernameInput username={username} setUsername={setUsername}/>
-            <br/><br/>
-            <button disabled={username.trim() == ""} onClick={()=> SignIn()}>
-                Sign In
-            </button>
-        </>
-    );
-}
-
-function App() {
+function PlaidSignIn({ setAccountBalancesText }: any) {
     const [linkToken, setLinkToken] = useState<string | null>(null);
-    const [accountBalancesText, setAccountBalancesText] = useState<string | null>(null);
     const [username, setUsername] = useState<string>("");
 
     function GetAccountBalances(accessToken: string) {
@@ -78,11 +38,55 @@ function App() {
         });
     }
 
+    const Link = ({ linkToken }: { linkToken: string }) => {
+        const config: Parameters<typeof usePlaidLink>[0] = {
+            token: linkToken,
+            // receivedRedirectUri: window.location.href,
+            onSuccess,
+        };
+
+        const { open, ready } = usePlaidLink(config);
+
+        useEffect(() => {
+            if (ready) {
+                open();
+            }
+        }, [ready, open]);
+
+        return (
+            <button onClick={() => open()} disabled={!ready}>
+                Retry Account Link
+            </button>
+        );
+    }
+
+    return (
+        <>
+            { linkToken != null ? (
+                <Link linkToken={linkToken}/>
+            ) : (
+                <>
+                    <img src="/financeapp.svg"/>
+                    <br/><br/>
+                    <input key="username-input" type="text" value={username} placeholder='Username' onChange={evt => setUsername(evt.target.value)} />
+                    <br/><br/>
+                    <button disabled={username.trim() == ""} onClick={()=> SignIn()}>
+                        Sign In
+                    </button>
+                </>
+            )}
+        </>
+    );
+}
+
+function App() {
+    const [accountBalancesText, setAccountBalancesText] = useState<string | null>(null);
+
     return (
         <>
             { accountBalancesText &&
                 <pre>{accountBalancesText}</pre> ||
-                <Link linkToken={linkToken} onSuccess={onSuccess} username={username} setUsername={setUsername} SignIn={SignIn}/>
+                <PlaidSignIn setAccountBalancesText={setAccountBalancesText}/>
             }
         </>
     )
