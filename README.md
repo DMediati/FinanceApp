@@ -2,7 +2,7 @@
 Learning Go and React by creating a Finance App using Plaid
 
 ## Initial Setup
-- Need Go and npm installed.
+- Need Go (1.21.0) and npm (9.8.1) version installed.
 - Need a Plaid account and credentials.
 - In the backend folder make a copy of envTemplate.txt, rename it to ".env" and fill in all the environment variables.
 - In the frontend folder run npm install.
